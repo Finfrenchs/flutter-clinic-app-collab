@@ -4,10 +4,12 @@ import 'package:flutter_clinic_app/core/assets/assets.gen.dart';
 import 'package:flutter_clinic_app/core/components/spaces.dart';
 import 'package:flutter_clinic_app/core/core.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/data_doctor_page.dart';
+import 'package:flutter_clinic_app/presentation/master/pages/data_service_page.dart';
 
 import '../../../core/components/button_menu.dart';
 import '../../home/widgets/build_app_bar.dart';
 import 'data_patient_page.dart';
+import 'data_schedule_doctor_page.dart';
 
 class MasterPage extends StatefulWidget {
   final void Function(int index) onTap;
@@ -54,13 +56,21 @@ class _MasterPageState extends State<MasterPage> {
             ButtonMenu(
               label: 'Jadwal Dokter',
               iconPath: Assets.images.menu.jadwal.path,
-              onPressed: () => widget.onTap(3),
+              onPressed: () {
+                context.push(
+                  const DataScheduleDoctorPage(),
+                );
+              },
             ),
             const SpaceWidth(45.0),
             ButtonMenu(
               label: 'Layanan',
               iconPath: Assets.images.menu.layanan.path,
-              onPressed: () => widget.onTap(4),
+              onPressed: () {
+                context.push(
+                  const DataServicePage(),
+                );
+              },
             ),
           ],
         ),
