@@ -6,6 +6,7 @@ import 'package:flutter_clinic_app/data/datasources/master_remote_datasource.dar
 import 'package:flutter_clinic_app/presentation/auth/bloc/logout/logout_bloc.dart';
 import 'package:flutter_clinic_app/presentation/auth/pages/login_page.dart';
 import 'package:flutter_clinic_app/presentation/home/pages/dashboard.dart';
+import 'package:flutter_clinic_app/presentation/master/bloc/create_patient/create_patient_bloc.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/data_doctor/data_doctor_bloc.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/data_doctor_schedule/data_doctor_schedule_bloc.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/data_layanan_obat/data_layanan_obat_bloc.dart';
@@ -43,6 +44,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => DataLayananObatBloc(MasterRemoteDatasource()),
+        ),
+        BlocProvider(
+          create: (context) => CreatePatientBloc(MasterRemoteDatasource()),
         ),
       ],
       child: MaterialApp(

@@ -17,6 +17,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/Log Out.svg
   SvgGenImage get logOut => const SvgGenImage('assets/icons/Log Out.svg');
 
+  /// File path: assets/icons/calendar.svg
+  SvgGenImage get calendar => const SvgGenImage('assets/icons/calendar.svg');
+
   /// File path: assets/icons/chart-pie.svg
   SvgGenImage get chartPie => const SvgGenImage('assets/icons/chart-pie.svg');
 
@@ -49,6 +52,7 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
         logOut,
+        calendar,
         chartPie,
         delete,
         filter,
@@ -68,6 +72,14 @@ class $AssetsImagesGen {
   AssetGenImage get splashScreen =>
       const AssetGenImage('assets/images/Splash Screen.png');
 
+  /// File path: assets/images/create_rm_success.png
+  AssetGenImage get createRmSuccess =>
+      const AssetGenImage('assets/images/create_rm_success.png');
+
+  /// File path: assets/images/doctor_placeholder.png
+  AssetGenImage get doctorPlaceholder =>
+      const AssetGenImage('assets/images/doctor_placeholder.png');
+
   /// File path: assets/images/dokterku.png
   AssetGenImage get dokterku =>
       const AssetGenImage('assets/images/dokterku.png');
@@ -79,7 +91,8 @@ class $AssetsImagesGen {
   $AssetsImagesProductsGen get products => const $AssetsImagesProductsGen();
 
   /// List of all assets
-  List<AssetGenImage> get values => [splashScreen, dokterku, google];
+  List<AssetGenImage> get values =>
+      [splashScreen, createRmSuccess, doctorPlaceholder, dokterku, google];
 }
 
 class $AssetsImagesMenuGen {

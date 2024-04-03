@@ -6,6 +6,7 @@ class SearchInput extends StatelessWidget {
   final Function(String value)? onChanged;
   final VoidCallback? onTap;
   final String hintText;
+  final TextInputType keyBoardType;
 
   const SearchInput({
     super.key,
@@ -13,6 +14,7 @@ class SearchInput extends StatelessWidget {
     this.onChanged,
     this.onTap,
     this.hintText = 'Cari di sini',
+    this.keyBoardType = TextInputType.text,
   });
 
   @override
@@ -27,6 +29,7 @@ class SearchInput extends StatelessWidget {
         // readOnly: onTap != null,
         controller: controller,
         onChanged: onChanged,
+        keyboardType: keyBoardType,
         decoration: InputDecoration(
           hintText: hintText,
           prefixIcon: const Icon(

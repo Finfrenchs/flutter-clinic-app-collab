@@ -2,30 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'spaces.dart';
 
-class CustomTextField extends StatelessWidget {
-  final TextEditingController controller;
+class CustomDropdown extends StatelessWidget {
+  final String? value;
+  final List<String> items;
   final String label;
-  final Function(String value)? onChanged;
-  final bool obscureText;
-  final TextInputType? keyboardType;
+  final Function(String? value)? onChanged;
   final bool showLabel;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
-  final bool readOnly;
-  final bool isDescription;
 
-  const CustomTextField({
+  const CustomDropdown({
     super.key,
-    required this.controller,
+    required this.value,
+    required this.items,
     required this.label,
     this.onChanged,
-    this.obscureText = false,
-    this.keyboardType,
     this.showLabel = true,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.readOnly = false,
-    this.isDescription = false,
   });
 
   @override
@@ -43,16 +33,16 @@ class CustomTextField extends StatelessWidget {
           ),
           const SpaceHeight(12.0),
         ],
-        TextFormField(
-          controller: controller,
+        DropdownButtonFormField<String>(
+          value: value,
           onChanged: onChanged,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          readOnly: readOnly,
-          maxLines: isDescription ? 3 : null,
+          items: items.map((String item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(item),
+            );
+          }).toList(),
           decoration: InputDecoration(
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16.0),
               borderSide: const BorderSide(color: Colors.grey),
@@ -61,7 +51,7 @@ class CustomTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               borderSide: const BorderSide(color: Colors.grey),
             ),
-            hintText: label,
+            hintText: value ?? label,
           ),
         ),
       ],

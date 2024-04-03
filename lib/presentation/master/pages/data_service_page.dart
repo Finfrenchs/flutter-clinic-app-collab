@@ -7,7 +7,6 @@ import '../../../core/components/search_input.dart';
 import '../../../core/components/spaces.dart';
 import '../../../core/core.dart';
 import '../../home/widgets/build_app_bar.dart';
-import '../models/product_model.dart';
 
 class DataServicePage extends StatefulWidget {
   const DataServicePage({super.key});

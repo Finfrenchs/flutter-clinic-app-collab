@@ -6,7 +6,6 @@ import 'package:flutter_clinic_app/presentation/master/bloc/data_doctor/data_doc
 
 import '../../../core/components/buttons.dart';
 import '../../home/widgets/build_app_bar.dart';
-import '../models/doctor_model.dart';
 
 class DataDoctorPage extends StatefulWidget {
   const DataDoctorPage({super.key});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_clinic_app/core/assets/assets.gen.dart';
 import 'package:flutter_clinic_app/core/components/spaces.dart';
 import 'package:flutter_clinic_app/core/core.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/data_doctor_page.dart';

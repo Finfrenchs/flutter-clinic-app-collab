@@ -12,6 +12,7 @@ class BuildAppBar extends StatefulWidget {
   final Function(String value)? onChanged;
   final VoidCallback? searchTap;
   final String searchHint;
+  final TextInputType keyBoardType;
 
   const BuildAppBar({
     super.key,
@@ -20,6 +21,7 @@ class BuildAppBar extends StatefulWidget {
     this.searchController,
     this.searchTap,
     this.onChanged,
+    this.keyBoardType = TextInputType.text,
     this.searchHint = 'Cari di sini',
   });
 
@@ -77,6 +79,7 @@ class _BuildAppBarState extends State<BuildAppBar> {
                 onTap: widget.searchTap,
                 hintText: widget.searchHint,
                 onChanged: widget.onChanged,
+                keyBoardType: widget.keyBoardType,
               ),
             ),
           if (widget.withSearchInput)

@@ -1,42 +1,6 @@
 import 'dart:convert';
-import 'dart:ffi';
 
-class MasterPatientResponseModel {
-  final List<MasterPatient>? data;
-  final String? message;
-  final String? status;
-
-  MasterPatientResponseModel({
-    this.data,
-    this.message,
-    this.status,
-  });
-
-  factory MasterPatientResponseModel.fromJson(String str) =>
-      MasterPatientResponseModel.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory MasterPatientResponseModel.fromMap(Map<String, dynamic> json) =>
-      MasterPatientResponseModel(
-        data: json["data"] == null
-            ? []
-            : List<MasterPatient>.from(
-                json["data"]!.map((x) => MasterPatient.fromMap(x))),
-        message: json["message"],
-        status: json["status"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
-        "message": message,
-        "status": status,
-      };
-}
-
-class MasterPatient {
-  final int? id;
+class CreatePatientRequestModel {
   final String? nik;
   final String? kk;
   final String? name;
@@ -61,11 +25,8 @@ class MasterPatient {
   final String? maritalStatus;
   final String? relationshipName;
   final String? relationshipPhone;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
 
-  MasterPatient({
-    this.id,
+  CreatePatientRequestModel({
     this.nik,
     this.kk,
     this.name,
@@ -90,17 +51,15 @@ class MasterPatient {
     this.maritalStatus,
     this.relationshipName,
     this.relationshipPhone,
-    this.createdAt,
-    this.updatedAt,
   });
 
-  factory MasterPatient.fromJson(String str) =>
-      MasterPatient.fromMap(json.decode(str));
+  factory CreatePatientRequestModel.fromJson(String str) =>
+      CreatePatientRequestModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory MasterPatient.fromMap(Map<String, dynamic> json) => MasterPatient(
-        id: json["id"],
+  factory CreatePatientRequestModel.fromMap(Map<String, dynamic> json) =>
+      CreatePatientRequestModel(
         nik: json["nik"],
         kk: json["kk"],
         name: json["name"],
@@ -125,16 +84,9 @@ class MasterPatient {
         maritalStatus: json["marital_status"],
         relationshipName: json["relationship_name"],
         relationshipPhone: json["relationship_phone"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id,
         "nik": nik,
         "kk": kk,
         "name": name,
@@ -159,7 +111,5 @@ class MasterPatient {
         "marital_status": maritalStatus,
         "relationship_name": relationshipName,
         "relationship_phone": relationshipPhone,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
       };
 }
