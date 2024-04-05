@@ -3,8 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_clinic_app/core/core.dart';
 import 'package:flutter_clinic_app/presentation/auth/bloc/logout/logout_bloc.dart';
 import 'package:flutter_clinic_app/presentation/auth/pages/login_page.dart';
+import 'package:flutter_clinic_app/presentation/master/pages/data_schedule_doctor_page.dart';
+import 'package:flutter_clinic_app/presentation/master/pages/data_service_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/master_page.dart';
+import 'package:flutter_clinic_app/presentation/master/pages/schedule_pasient_page.dart';
 
+import '../../master/pages/data_doctor_page.dart';
+import '../../master/pages/data_patient_page.dart';
 import '../widgets/nav_item.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -15,15 +20,37 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  int _dataMasterIndex = 0;
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const Center(child: Text('This is page 1')),
-    MasterPage(onTap: (_) {}),
-    const Center(child: Text('This is page 3')),
-    const Center(child: Text('This is page 4')),
-    const Center(child: Text('This is page 5')),
-  ];
+  @override
+  void initState() {
+    _dataMasterPages = [
+      MasterPage(
+        onTap: (index) {
+          _dataMasterIndex = index;
+          setState(() {});
+        },
+      ),
+      const DataDoctorPage(),
+      const DataPatientPage(),
+      const DataScheduleDoctorPage(),
+      const DataServicePage(),
+    ];
+
+    _pages = [
+      const Center(child: Text('This is page 1')),
+      MasterPage(onTap: (_) {}),
+      const Center(child: Text('This is page 3')),
+      const SchedulePasientPage(),
+      const Center(child: Text('This is page 5')),
+      const Center(child: Text('This is page 6')),
+    ];
+    super.initState();
+  }
+
+  late final List<Widget> _dataMasterPages;
+  late final List<Widget> _pages;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +93,11 @@ class _DashboardPageState extends State<DashboardPage> {
                           isActive: _selectedIndex == 4,
                           onTap: () => _onItemTapped(4),
                         ),
+                        NavItem(
+                          iconPath: Assets.icons.history.path,
+                          isActive: _selectedIndex == 5,
+                          onTap: () => _onItemTapped(5),
+                        ),
                         BlocListener<LogoutBloc, LogoutState>(
                           listener: (context, state) {
                             state.maybeWhen(
@@ -104,9 +136,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
             ),
-            Expanded(
-              child: _pages[_selectedIndex],
-            ),
+            if (_selectedIndex == 1)
+              Expanded(
+                child: _dataMasterPages[_dataMasterIndex],
+              )
+            else
+              Expanded(
+                child: _pages[_selectedIndex],
+              ),
           ],
         ),
       ),
@@ -115,6 +152,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   void _onItemTapped(int index) {
     _selectedIndex = index;
+    _dataMasterIndex = 0;
     setState(() {});
   }
 }

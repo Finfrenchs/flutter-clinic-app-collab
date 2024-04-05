@@ -40,7 +40,7 @@ class _MasterPageState extends State<MasterPage> {
               label: 'Data Dokter',
               iconPath: Assets.images.menu.data.path,
               onPressed: () {
-                context.push(const DataDoctorPage());
+                widget.onTap(1);
               },
             ),
             const SpaceWidth(45.0),
@@ -48,7 +48,7 @@ class _MasterPageState extends State<MasterPage> {
               label: 'Data Pasien',
               iconPath: Assets.images.menu.data.path,
               onPressed: () {
-                context.push(const DataPatientPage());
+                widget.onTap(2);
               },
             ),
             const SpaceWidth(45.0),
@@ -56,9 +56,7 @@ class _MasterPageState extends State<MasterPage> {
               label: 'Jadwal Dokter',
               iconPath: Assets.images.menu.jadwal.path,
               onPressed: () {
-                context.push(
-                  const DataScheduleDoctorPage(),
-                );
+                widget.onTap(3);
               },
             ),
             const SpaceWidth(45.0),
@@ -66,9 +64,7 @@ class _MasterPageState extends State<MasterPage> {
               label: 'Layanan',
               iconPath: Assets.images.menu.layanan.path,
               onPressed: () {
-                context.push(
-                  const DataServicePage(),
-                );
+                widget.onTap(4);
               },
             ),
           ],

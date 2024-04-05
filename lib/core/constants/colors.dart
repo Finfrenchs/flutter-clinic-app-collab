@@ -41,7 +41,7 @@ class AppColors {
   static const Color stroke = Color(0xffF1F2F6);
 
   /// orderIsConfirmed = #00B69B
-  static const Color orderIsConfirmed = Color(0xff00B69B);
+  static const Color orderIsProcessed = Color(0xff00B69B);
 
   /// orderIsCompleted = #00B69B
   static const Color orderIsCompleted = Color(0xff00B69B);

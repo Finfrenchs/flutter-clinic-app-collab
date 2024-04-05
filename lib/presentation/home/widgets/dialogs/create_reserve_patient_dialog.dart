@@ -1,102 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_clinic_app/core/core.dart';
+import 'package:flutter_clinic_app/data/models/request/create_reserve_patient_request_model.dart';
+import 'package:flutter_clinic_app/data/models/response/create_reserve_patient_response_model.dart';
+import 'package:flutter_clinic_app/data/models/response/master_patient_response.dart';
+import 'package:flutter_clinic_app/presentation/master/bloc/create_reserve_patient/create_reserve_patient_bloc.dart';
+import 'package:flutter_clinic_app/presentation/master/bloc/data_doctor/data_doctor_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/components/components.dart';
 import '../../../../core/components/custom_date_picker.dart';
 import '../../../../core/components/custom_dropdown.dart';
-import '../../../master/models/doctor_model.dart';
-import '../../../master/models/pasient_model.dart';
+import '../../../../data/models/response/master_doctor_response_model.dart';
 import '../doctor_dropdown.dart';
 import 'create_patient_success_dialog.dart';
 
 class CreateReservePatientDialog extends StatefulWidget {
-  final PasientModel? patient;
+  final MasterPatient? patient;
   const CreateReservePatientDialog({super.key, this.patient});
 
   @override
-  State<CreateReservePatientDialog> createState() => _CreateReservePatientDialogState();
+  State<CreateReservePatientDialog> createState() =>
+      _CreateReservePatientDialogState();
 }
 
-class _CreateReservePatientDialogState extends State<CreateReservePatientDialog> {
-  final genders = ['Laki-laki', 'Perempuan'];
-  final doctors = [
-    DoctorModel(
-      imageUrl:
-          'https://cdn.idntimes.com/content-images/duniaku/post/20191101/roronoa-zoro-smile-0078d7e8a33471cfbb5077358d7d21d5.jpg',
-      name: 'Dr. John Doe',
-      spesialis: 'Cardiologist',
-      noReg: 'DOC12345',
-      jadwalPraktikBuka: DateTime(2024, 2, 24, 9, 0),
-      jadwalPraktikTutup: DateTime(2024, 2, 24, 17, 0),
-      ruangan: 'Room 101',
-    ),
-    DoctorModel(
-      imageUrl:
-          'https://cdn.idntimes.com/content-images/duniaku/post/20191101/roronoa-zoro-smile-0078d7e8a33471cfbb5077358d7d21d5.jpg',
-      name: 'Dr. Jane Smith',
-      spesialis: 'Dermatologist',
-      noReg: 'DOC54321',
-      jadwalPraktikBuka: DateTime(2024, 2, 25, 10, 0),
-      jadwalPraktikTutup: DateTime(2024, 2, 25, 18, 0),
-      ruangan: 'Room 202',
-    ),
-    DoctorModel(
-      imageUrl:
-          'https://cdn.idntimes.com/content-images/duniaku/post/20191101/roronoa-zoro-smile-0078d7e8a33471cfbb5077358d7d21d5.jpg',
-      name: 'Dr. Michael Johnson',
-      spesialis: 'Pediatrician',
-      noReg: 'DOC67890',
-      jadwalPraktikBuka: DateTime(2024, 2, 26, 8, 0),
-      jadwalPraktikTutup: DateTime(2024, 2, 26, 16, 0),
-      ruangan: 'Room 303',
-    ),
-    DoctorModel(
-      imageUrl:
-          'https://cdn.idntimes.com/content-images/duniaku/post/20191101/roronoa-zoro-smile-0078d7e8a33471cfbb5077358d7d21d5.jpg',
-      name: 'Dr. Emily Williams',
-      spesialis: 'Neurologist',
-      noReg: 'DOC13579',
-      jadwalPraktikBuka: DateTime(2024, 2, 27, 11, 0),
-      jadwalPraktikTutup: DateTime(2024, 2, 27, 19, 0),
-      ruangan: 'Room 404',
-    ),
-    DoctorModel(
-      imageUrl:
-          'https://cdn.idntimes.com/content-images/duniaku/post/20191101/roronoa-zoro-smile-0078d7e8a33471cfbb5077358d7d21d5.jpg',
-      name: 'Dr. David Brown',
-      spesialis: 'Oncologist',
-      noReg: 'DOC24680',
-      jadwalPraktikBuka: DateTime(2024, 2, 28, 7, 30),
-      jadwalPraktikTutup: DateTime(2024, 2, 28, 15, 30),
-      ruangan: 'Room 505',
-    ),
-  ];
+class _CreateReservePatientDialogState
+    extends State<CreateReservePatientDialog> {
+  //final genders = ['Laki-laki', 'Perempuan'];
 
-  late final ValueNotifier<bool> switchNotifier;
-  late final ValueNotifier<String?> genderNotifier;
+  MasterDoctor? selectedDoctor;
+
+  // late final ValueNotifier<bool> switchNotifier;
+  // late final ValueNotifier<String?> genderNotifier;
   late final TextEditingController patientNameController;
   late final TextEditingController nikController;
   late final TextEditingController complaintController;
-  late DateTime? birthdate;
-  late DateTime? outpatientDate;
+  late final TextEditingController birthDateController;
+  late final TextEditingController genderController;
+  late DateTime? scheduleTime;
+  late DateTime? birthDate;
+
+  String formatDate(DateTime date) {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+
+    final String formattedDate = formatter.format(date);
+
+    return formattedDate;
+  }
 
   @override
   void initState() {
-    switchNotifier = ValueNotifier(widget.patient == null);
-    genderNotifier = ValueNotifier(widget.patient?.jenisKelamin);
-    patientNameController = TextEditingController(text: widget.patient?.nama);
+    // switchNotifier = ValueNotifier(widget.patient == null);
+    // genderNotifier = ValueNotifier(widget.patient?.gender);
+    patientNameController = TextEditingController(text: widget.patient?.name);
     nikController = TextEditingController(text: widget.patient?.nik);
-    complaintController = TextEditingController(text: widget.patient?.kelugan);
-    birthdate = widget.patient?.tanggalLahir;
-    outpatientDate = widget.patient?.tanggalRawatJalan;
+    complaintController = TextEditingController();
+    scheduleTime = DateTime.now();
+    birthDate = DateTime.parse('${widget.patient!.birthDate}');
+    birthDateController =
+        TextEditingController(text: widget.patient?.birthDate);
+    genderController = TextEditingController(
+      text: widget.patient!.gender,
+    );
+
+    context.read<DataDoctorBloc>().add(const DataDoctorEvent.getDoctors());
     super.initState();
   }
 
   @override
   void dispose() {
-    switchNotifier.dispose();
     patientNameController.dispose();
-    genderNotifier.dispose();
+    genderController.dispose();
+    birthDateController.dispose();
     nikController.dispose();
     complaintController.dispose();
     super.dispose();
@@ -117,9 +92,9 @@ class _CreateReservePatientDialogState extends State<CreateReservePatientDialog>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
-                        const Text(
+                        Text(
                           'Detail Pasien',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
@@ -127,30 +102,11 @@ class _CreateReservePatientDialogState extends State<CreateReservePatientDialog>
                             color: AppColors.darkGrey,
                           ),
                         ),
-                        const Spacer(),
-                        const Text(
+                        Spacer(),
+                        Text(
                           'Pasien Baru',
                           style: TextStyle(
                             color: AppColors.darkGrey,
-                          ),
-                        ),
-                        const SpaceWidth(20.0),
-                        ValueListenableBuilder(
-                          valueListenable: switchNotifier,
-                          builder: (context, value, _) => Switch(
-                            value: value,
-                            onChanged: (value) {
-                              switchNotifier.value = value;
-                              if (value) {
-                                genderNotifier.value = null;
-                                patientNameController.clear();
-                                nikController.clear();
-                                complaintController.clear();
-                                birthdate = null;
-                                outpatientDate = null;
-                                setState(() {});
-                              }
-                            },
                           ),
                         ),
                       ],
@@ -162,31 +118,26 @@ class _CreateReservePatientDialogState extends State<CreateReservePatientDialog>
                       showLabel: false,
                     ),
                     const SpaceHeight(24.0),
-                    ValueListenableBuilder(
-                      valueListenable: genderNotifier,
-                      builder: (context, value, _) => CustomDropdown(
-                        value: value,
-                        items: genders,
-                        label: 'Jenis Kelamin',
-                        onChanged: (value) => genderNotifier.value = value!,
-                        showLabel: false,
-                      ),
+                    CustomTextField(
+                      controller: genderController,
+                      label: 'Jenis Kelamin',
+                      showLabel: false,
                     ),
                     const SpaceHeight(24.0),
                     CustomDatePicker(
-                      initialDate: birthdate,
+                      initialDate: birthDate,
                       label: 'Tanggal Lahir',
                       showLabel: false,
                       onDateSelected: (selectedDate) =>
-                          birthdate = selectedDate,
+                          birthDate = selectedDate,
                     ),
                     const SpaceHeight(24.0),
                     CustomDatePicker(
-                      initialDate: outpatientDate,
+                      initialDate: scheduleTime,
                       label: 'Tanggal Rawat Jalan',
                       showLabel: false,
                       onDateSelected: (selectedDate) =>
-                          outpatientDate = selectedDate,
+                          scheduleTime = selectedDate,
                     ),
                     const SpaceHeight(24.0),
                     CustomTextField(
@@ -207,79 +158,149 @@ class _CreateReservePatientDialogState extends State<CreateReservePatientDialog>
             ),
             const SpaceWidth(50.0),
             SingleChildScrollView(
-              child: SizedBox(
-                width: context.deviceWidth / 4,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Detail Pasien',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.0,
-                        color: AppColors.darkGrey,
-                      ),
-                    ),
-                    const SpaceHeight(40.0),
-                    DoctorDropdown(
-                      value: null,
-                      items: doctors,
-                      label: 'Pilih Dokter',
-                      onChanged: (value) {},
-                    ),
-                    const SpaceHeight(20.0),
-                    SizedBox(
-                      height: 405.0,
-                      child: Center(
+              child: BlocBuilder<DataDoctorBloc, DataDoctorState>(
+                builder: (context, state) {
+                  return state.maybeWhen(
+                    orElse: () {
+                      return const SizedBox();
+                    },
+                    loaded: (doctors) {
+                      return SizedBox(
+                        width: context.deviceWidth / 4,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Assets.images.doctorPlaceholder.image(width: 140.0),
-                            const SpaceHeight(40.0),
                             const Text(
-                              'Add Doctor to Patient',
+                              'Detail Pasien',
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 20.0,
+                                fontSize: 16.0,
+                                color: AppColors.darkGrey,
+                              ),
+                            ),
+                            const SpaceHeight(40.0),
+                            DoctorDropdown(
+                              value: selectedDoctor,
+                              items: doctors,
+                              label: 'Pilih Dokter',
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedDoctor = value;
+                                });
+                              },
+                            ),
+                            const SpaceHeight(20.0),
+                            SizedBox(
+                              height: 405.0,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Assets.images.doctorPlaceholder
+                                        .image(width: 140.0),
+                                    const SpaceHeight(40.0),
+                                    const Text(
+                                      'Add Doctor to Patient',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                    const SpaceHeight(20.0),
+                                    const Text(
+                                      'Search and add doctor to this patient.',
+                                      style:
+                                          TextStyle(color: AppColors.darkGrey),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const SpaceHeight(20.0),
-                            const Text(
-                              'Search and add doctor to this patient.',
-                              style: TextStyle(color: AppColors.darkGrey),
-                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Button.outlined(
+                                    onPressed: () => context.pop(),
+                                    label: 'Cancel',
+                                  ),
+                                ),
+                                const SpaceWidth(10.0),
+                                Flexible(
+                                  child: BlocConsumer<CreateReservePatientBloc,
+                                      CreateReservePatientState>(
+                                    listener: (context, state) {
+                                      state.maybeWhen(
+                                        orElse: () {
+                                          return const SizedBox();
+                                        },
+                                        error: (message) {
+                                          context.pop(true);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(message),
+                                              backgroundColor: AppColors.red,
+                                            ),
+                                          );
+                                        },
+                                        loaded: (responseModel) {
+                                          context.pop(true);
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (context) =>
+                                                CreatePatientSuccessDialog(
+                                              noAntrian:
+                                                  '${responseModel.data!.noAntrian!}',
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    builder: (context, state) {
+                                      return state.maybeWhen(
+                                        orElse: () {
+                                          return Button.filled(
+                                            onPressed: () {
+                                              final CreateReservePatientRequestModel
+                                                  reservePatient =
+                                                  CreateReservePatientRequestModel(
+                                                patientId: widget.patient!.id,
+                                                scheduleTime:
+                                                    formatDate(scheduleTime!),
+                                                complaint:
+                                                    complaintController.text,
+                                                doctorId: selectedDoctor!.id,
+                                              );
+
+                                              context
+                                                  .read<
+                                                      CreateReservePatientBloc>()
+                                                  .add(
+                                                    CreateReservePatientEvent
+                                                        .reserve(
+                                                            reservePatient),
+                                                  );
+                                            },
+                                            label: 'Create Reserve',
+                                          );
+                                        },
+                                        loading: () => const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
                         ),
-                      ),
-                    ),
-                    const SpaceHeight(20.0),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Button.outlined(
-                            onPressed: () => context.pop(),
-                            label: 'Cancel',
-                          ),
-                        ),
-                        const SpaceWidth(10.0),
-                        Flexible(
-                          child: Button.filled(
-                            onPressed: () {
-                              context.pop();
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) =>
-                                    const CreatePatientSuccessDialog(),
-                              );
-                            },
-                            label: 'Create Patient',
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],

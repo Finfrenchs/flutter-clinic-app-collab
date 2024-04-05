@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import '../../home/widgets/build_app_bar.dart';
 import '../../home/widgets/dialogs/create_patient_dialog.dart';
+import '../../home/widgets/dialogs/create_reserve_patient_dialog.dart';
 
 class DataPatientPage extends StatefulWidget {
   const DataPatientPage({super.key});
@@ -27,6 +28,14 @@ class _DataPatientPageState extends State<DataPatientPage> {
   void initState() {
     context.read<DataPatientsBloc>().add(const DataPatientsEvent.getPatients());
     super.initState();
+  }
+
+  void createReservePatientTap([MasterPatient? patient]) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => CreateReservePatientDialog(patient: patient),
+    );
   }
 
   @override
@@ -206,7 +215,7 @@ class _DataPatientPageState extends State<DataPatientPage> {
                 DataCell(
                   Button.filled(
                     onPressed: () {
-                      //dialog reservasi create
+                      createReservePatientTap(patient);
                     },
                     label: 'Reserve',
                     width: null,

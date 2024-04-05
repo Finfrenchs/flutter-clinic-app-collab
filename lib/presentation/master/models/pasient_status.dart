@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../core/core.dart';
 
 enum PasientStatus {
-  waiting('Waiting'),
-  confirmed('Confirmed'),
-  processing('Processing'),
-  rejected('Rejected'),
-  completed('Completed'),
-  onHold('On Hold'),
+  waiting('waiting'),
+  processed('processed'),
+  processing('processing'),
+  rejected('rejected'),
+  completed('completed'),
+  onHold('on hold'),
   notFound('Unknown status');
 
   final String value;
@@ -27,8 +27,8 @@ extension PasientStatusExtension on PasientStatus {
     switch (this) {
       case PasientStatus.waiting:
         return AppColors.orderIsWaiting;
-      case PasientStatus.confirmed:
-        return AppColors.orderIsConfirmed;
+      case PasientStatus.processed:
+        return AppColors.orderIsProcessed;
       case PasientStatus.processing:
         return AppColors.orderIsProcessing;
       case PasientStatus.completed:
@@ -46,8 +46,8 @@ extension PasientStatusExtension on PasientStatus {
     switch (this) {
       case PasientStatus.waiting:
         return AppColors.orderIsWaiting.withOpacity(0.2);
-      case PasientStatus.confirmed:
-        return AppColors.orderIsConfirmed.withOpacity(0.2);
+      case PasientStatus.processed:
+        return AppColors.orderIsProcessed.withOpacity(0.2);
       case PasientStatus.processing:
         return AppColors.orderIsProcessing.withOpacity(0.2);
       case PasientStatus.completed:

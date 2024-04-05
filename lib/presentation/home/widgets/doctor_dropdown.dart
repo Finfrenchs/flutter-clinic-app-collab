@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_clinic_app/data/models/response/master_doctor_response_model.dart';
 
 import '../../../core/components/components.dart';
-import '../../master/models/doctor_model.dart';
 
 class DoctorDropdown extends StatelessWidget {
-  final DoctorModel? value;
-  final List<DoctorModel> items;
+  final MasterDoctor? value;
+  final List<MasterDoctor> items;
   final String label;
-  final Function(DoctorModel? value)? onChanged;
+  final Function(MasterDoctor? value)? onChanged;
 
   const DoctorDropdown({
     super.key,
@@ -22,32 +23,39 @@ class DoctorDropdown extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField<DoctorModel>(
+        DropdownButtonFormField<MasterDoctor>(
           value: value,
           onChanged: onChanged,
+          isExpanded: true,
           selectedItemBuilder: (context) => items
-              .map((DoctorModel item) => DropdownMenuItem<DoctorModel>(
+              .map((MasterDoctor item) => DropdownMenuItem<MasterDoctor>(
                     value: item,
                     child: Text(
-                      '${item.name} (${item.spesialis})',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      '${item.doctorName} (${item.doctorSpecialist})',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ))
               .toList(),
           items: items
-              .map((DoctorModel item) => DropdownMenuItem<DoctorModel>(
+              .map((MasterDoctor item) => DropdownMenuItem<MasterDoctor>(
                     value: item,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
                       child: Row(
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              item.imageUrl,
-                              width: 50.0,
-                              height: 50.0,
-                              fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: 40.0,
+                              height: 40.0,
+                              child: FittedBox(
+                                fit: BoxFit.cover,
+                                child: Image.network(
+                                  '${item.photo}',
+                                ),
+                              ),
                             ),
                           ),
                           const SpaceWidth(14.0),
@@ -56,9 +64,10 @@ class DoctorDropdown extends StatelessWidget {
                             children: [
                               const Text('Nama Dokter'),
                               Text(
-                                '${item.name} (${item.spesialis})',
+                                '${item.doctorName} (${item.doctorSpecialist})',
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w600),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
@@ -76,7 +85,7 @@ class DoctorDropdown extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               borderSide: const BorderSide(color: Colors.grey),
             ),
-            hintText: value?.name ?? label,
+            hintText: value?.doctorName ?? label,
           ),
         ),
       ],

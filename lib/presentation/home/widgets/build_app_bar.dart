@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -13,16 +14,18 @@ class BuildAppBar extends StatefulWidget {
   final VoidCallback? searchTap;
   final String searchHint;
   final TextInputType keyBoardType;
+  final Widget? trailing;
 
   const BuildAppBar({
     super.key,
     required this.title,
     this.withSearchInput = false,
     this.searchController,
-    this.searchTap,
     this.onChanged,
-    this.keyBoardType = TextInputType.text,
+    this.searchTap,
     this.searchHint = 'Cari di sini',
+    this.keyBoardType = TextInputType.text,
+    this.trailing,
   });
 
   @override
@@ -84,6 +87,7 @@ class _BuildAppBarState extends State<BuildAppBar> {
             ),
           if (widget.withSearchInput)
             const Flexible(flex: 1, child: SizedBox.shrink()),
+          widget.trailing ?? const SizedBox.shrink(),
         ],
       ),
     );

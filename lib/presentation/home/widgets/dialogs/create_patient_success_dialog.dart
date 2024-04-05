@@ -1,11 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 import '../../../../core/components/components.dart';
 import '../../../../core/core.dart';
 
-
 class CreatePatientSuccessDialog extends StatelessWidget {
-  const CreatePatientSuccessDialog({super.key});
+  final String noAntrian;
+  const CreatePatientSuccessDialog({
+    super.key,
+    required this.noAntrian,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +29,9 @@ class CreatePatientSuccessDialog extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: AppColors.primary,
               ),
-              child: const Text(
-                '19',
-                style: TextStyle(
+              child: Text(
+                noAntrian,
+                style: const TextStyle(
                   fontSize: 120.0,
                   color: AppColors.white,
                   fontWeight: FontWeight.w900,
@@ -44,12 +48,12 @@ class CreatePatientSuccessDialog extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SpaceHeight(40.0),
-            Button.filled(
-              width: 120.0,
-              onPressed: () {},
-              label: 'Print',
-            ),
+            const SpaceHeight(20.0),
+            // Button.filled(
+            //   width: 120.0,
+            //   onPressed: () {},
+            //   label: 'Print',
+            // ),
           ],
         ),
       ),
