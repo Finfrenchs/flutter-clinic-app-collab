@@ -91,12 +91,22 @@ class $AssetsImagesGen {
   /// File path: assets/images/google.png
   AssetGenImage get google => const AssetGenImage('assets/images/google.png');
 
+  /// File path: assets/images/medicine.png
+  AssetGenImage get medicine =>
+      const AssetGenImage('assets/images/medicine.png');
+
   $AssetsImagesMenuGen get menu => const $AssetsImagesMenuGen();
   $AssetsImagesProductsGen get products => const $AssetsImagesProductsGen();
 
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [splashScreen, createRmSuccess, doctorPlaceholder, dokterku, google];
+  List<AssetGenImage> get values => [
+        splashScreen,
+        createRmSuccess,
+        doctorPlaceholder,
+        dokterku,
+        google,
+        medicine
+      ];
 }
 
 class $AssetsImagesMenuGen {

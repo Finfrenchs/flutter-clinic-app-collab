@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_clinic_app/core/core.dart';
+import 'package:flutter_clinic_app/data/models/response/master_doctor_response_model.dart';
+import 'package:flutter_clinic_app/data/models/response/master_patient_response.dart';
 import 'package:flutter_clinic_app/presentation/home/widgets/dialogs/create_reserve_patient_dialog.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/get_schedule_patient/get_schedule_patient_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/components/components.dart';
 import '../../home/widgets/build_app_bar.dart';
+import '../../home/widgets/dialogs/create_medical_record_dialog.dart';
 import '../../home/widgets/dialogs/create_patient_dialog.dart';
 import '../models/pasient_model.dart';
 import '../models/pasient_status.dart';
@@ -37,6 +40,21 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
     final String formattedDate = formatter.format(date);
 
     return formattedDate;
+  }
+
+  void createRmPatientTap(int patientScheduleId, DateTime scheduleTime,
+      String complaint, MasterDoctor doctor, MasterPatient patient) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => CreateMedicalRecordDialog(
+        doctor: doctor,
+        patient: patient,
+        patientScheduleId: patientScheduleId,
+        scheduleTime: scheduleTime,
+        complaint: complaint,
+      ),
+    );
   }
 
   @override
@@ -74,32 +92,32 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
           Row(
             children: [
               Badge(
-                backgroundColor: PasientStatus.waiting.color,
+                backgroundColor: PatientStatus.waiting.color,
                 smallSize: 18.0,
               ),
               const SpaceWidth(4.0),
-              Text(PasientStatus.waiting.value),
+              Text(PatientStatus.waiting.value),
               const SpaceWidth(40.0),
               Badge(
-                backgroundColor: PasientStatus.processing.color,
+                backgroundColor: PatientStatus.processing.color,
                 smallSize: 18.0,
               ),
               const SpaceWidth(4.0),
-              Text(PasientStatus.processing.value),
+              Text(PatientStatus.processing.value),
               const SpaceWidth(40.0),
               Badge(
-                backgroundColor: PasientStatus.onHold.color,
+                backgroundColor: PatientStatus.onHold.color,
                 smallSize: 18.0,
               ),
               const SpaceWidth(4.0),
-              Text(PasientStatus.onHold.value),
+              Text(PatientStatus.onHold.value),
               const SpaceWidth(40.0),
               Badge(
-                backgroundColor: PasientStatus.completed.color,
+                backgroundColor: PatientStatus.completed.color,
                 smallSize: 18.0,
               ),
               const SpaceWidth(4.0),
-              Text(PasientStatus.completed.value),
+              Text(PatientStatus.completed.value),
             ],
           ),
           const SpaceHeight(40.0),
@@ -257,18 +275,23 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
                               ]
                             : schedulePatient
                                 .map(
-                                  (patient) => DataRow(cells: [
-                                    DataCell(Text(patient.patient!.name!)),
-                                    DataCell(Text(patient.complaint ?? '')),
-                                    DataCell(Text(patient.patient!.gender!)),
-                                    DataCell(Text(patient.patient!.birthDate!)),
+                                  (patientSchedule) => DataRow(cells: [
+                                    DataCell(
+                                        Text(patientSchedule.patient!.name!)),
+                                    DataCell(
+                                        Text(patientSchedule.complaint ?? '')),
+                                    DataCell(
+                                        Text(patientSchedule.patient!.gender!)),
                                     DataCell(Text(
-                                        formatDate(patient.scheduleTime!))),
-                                    DataCell(Text(patient.patient!.nik!)),
+                                        patientSchedule.patient!.birthDate!)),
+                                    DataCell(Text(formatDate(
+                                        patientSchedule.scheduleTime!))),
+                                    DataCell(
+                                        Text(patientSchedule.patient!.nik!)),
                                     DataCell(
                                       _buildStatusBadgeCell(
-                                          PasientStatus.fromValue(
-                                              patient.status!)),
+                                          PatientStatus.fromValue(
+                                              patientSchedule.status!)),
                                     ),
                                     DataCell(
                                       PopupMenuButton<String>(
@@ -277,7 +300,7 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
                                         itemBuilder: (BuildContext context) =>
                                             <PopupMenuEntry<String>>[
                                           for (var status
-                                              in PasientStatus.values)
+                                              in PatientStatus.values)
                                             PopupMenuItem<String>(
                                               value: status
                                                   .value, // Gunakan nilai status dari PasientStatus
@@ -288,14 +311,22 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
                                         onSelected: (String value) {
                                           // Konversi nilai string ke PasientStatus
                                           final selectedStatus =
-                                              PasientStatus.fromValue(value);
-                                          // Lakukan tindakan sesuai dengan status yang dipilih
-                                          // Contoh:
-                                          // if (selectedStatus == PasientStatus.waiting) {
-                                          //   createPatientTap(patient);
-                                          // } else {
-                                          //   scaffoldkey.currentState!.openEndDrawer();
-                                          // }
+                                              PatientStatus.fromValue(value);
+
+                                          if (selectedStatus ==
+                                              PatientStatus.processing) {
+                                            // Pastikan patientSchedule tidak null
+                                            createRmPatientTap(
+                                              patientSchedule.id!,
+                                              patientSchedule.scheduleTime!,
+                                              patientSchedule.complaint!,
+                                              patientSchedule.doctor!,
+                                              patientSchedule.patient!,
+                                            );
+                                          } else {
+                                            scaffoldkey.currentState!
+                                                .openEndDrawer();
+                                          }
                                         },
                                       ),
                                     )
@@ -315,7 +346,7 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
   }
 }
 
-Widget _buildStatusBadge(PasientStatus status) {
+Widget _buildStatusBadge(PatientStatus status) {
   return Row(
     children: [
       Badge(
@@ -328,7 +359,7 @@ Widget _buildStatusBadge(PasientStatus status) {
   );
 }
 
-Widget _buildStatusBadgeCell(PasientStatus status) {
+Widget _buildStatusBadgeCell(PatientStatus status) {
   return ClipRRect(
     borderRadius: BorderRadius.circular(12.0),
     child: ColoredBox(
@@ -347,7 +378,7 @@ Widget _buildStatusBadgeCell(PasientStatus status) {
 }
 
 class _PopupMenuItemValue extends StatelessWidget {
-  final PasientStatus item;
+  final PatientStatus item;
   const _PopupMenuItemValue(this.item);
 
   @override

@@ -1,7 +1,6 @@
 import '../../../core/core.dart';
 import 'pasient_status.dart';
 
-
 class PasientModel {
   final String nama;
   final String keluhan;
@@ -9,7 +8,7 @@ class PasientModel {
   final DateTime tanggalLahir;
   final DateTime? tanggalRawatJalan;
   final String nik;
-  final PasientStatus status;
+  final PatientStatus status;
   final String? kelugan;
 
   PasientModel({

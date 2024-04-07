@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/components/components.dart';
 import '../../../../core/components/custom_date_picker.dart';
-import '../../../../core/components/custom_dropdown.dart';
 import '../../../../data/models/response/master_doctor_response_model.dart';
 import '../doctor_dropdown.dart';
 import 'create_patient_success_dialog.dart';

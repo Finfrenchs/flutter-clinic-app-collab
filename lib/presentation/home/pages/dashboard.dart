@@ -6,6 +6,7 @@ import 'package:flutter_clinic_app/presentation/auth/pages/login_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/data_schedule_doctor_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/data_service_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/master_page.dart';
+import 'package:flutter_clinic_app/presentation/master/pages/medical_record_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/schedule_pasient_page.dart';
 
 import '../../master/pages/data_doctor_page.dart';
@@ -40,8 +41,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
     _pages = [
       const Center(child: Text('This is page 1')),
+      const MedicalRecordPage(),
       MasterPage(onTap: (_) {}),
-      const Center(child: Text('This is page 3')),
       const SchedulePasientPage(),
       const Center(child: Text('This is page 5')),
       const Center(child: Text('This is page 6')),
@@ -136,7 +137,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
             ),
-            if (_selectedIndex == 1)
+            if (_selectedIndex == 2)
               Expanded(
                 child: _dataMasterPages[_dataMasterIndex],
               )
