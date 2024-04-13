@@ -1,22 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:flutter_clinic_app/data/models/response/master_data_layanan_response_model.dart';
+
 import '../../../core/components/components.dart';
 import '../../../core/core.dart';
-import '../models/medicine_model.dart';
 
-class MedicineCard extends StatelessWidget {
+class MedicineCard extends StatefulWidget {
   final ServiceAndMedicine item;
+  final ValueNotifier<int> quantityNotifier;
+  final void Function(int) onQuantityChanged;
   final VoidCallback onRemoveTap;
 
   const MedicineCard({
     super.key,
     required this.item,
+    required this.quantityNotifier,
+    required this.onQuantityChanged,
     required this.onRemoveTap,
   });
 
   @override
+  State<MedicineCard> createState() => _MedicineCardState();
+}
+
+class _MedicineCardState extends State<MedicineCard> {
+  @override
   Widget build(BuildContext context) {
-    final quantityNotifier = ValueNotifier(item.quantity ?? 1);
+    //final quantityNotifier = ValueNotifier(0);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -42,10 +53,10 @@ class MedicineCard extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: context.deviceWidth - 1080.0,
-                        child: Text(item.name!),
+                        child: Text(widget.item.name!),
                       ),
                       InkWell(
-                        onTap: onRemoveTap,
+                        onTap: widget.onRemoveTap,
                         child: const Text(
                           'Remove',
                           style: TextStyle(color: AppColors.red),
@@ -55,7 +66,7 @@ class MedicineCard extends StatelessWidget {
                   ),
                   SizedBox(
                     width: context.deviceWidth - 1080.0,
-                    child: Text(item.category!),
+                    child: Text(widget.item.category!),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,24 +74,32 @@ class MedicineCard extends StatelessWidget {
                       SizedBox(
                         width: context.deviceWidth - 1140.0,
                         child: Text(
-                          '${item.price}',
+                          '${widget.item.price}',
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
                       IconButton(
-                        onPressed: () => quantityNotifier.value--,
+                        onPressed: () {
+                          widget.onQuantityChanged(
+                              widget.quantityNotifier.value - 1);
+                          setState(() {});
+                        },
                         icon: const Icon(Icons.remove_circle),
                         color: AppColors.grey,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: ValueListenableBuilder(
-                          valueListenable: quantityNotifier,
+                          valueListenable: widget.quantityNotifier,
                           builder: (context, value, _) => Text('$value'),
                         ),
                       ),
                       IconButton(
-                        onPressed: () => quantityNotifier.value++,
+                        onPressed: () {
+                          widget.onQuantityChanged(
+                              widget.quantityNotifier.value + 1);
+                          setState(() {});
+                        },
                         icon: const Icon(Icons.add_circle),
                         color: AppColors.grey,
                       ),
@@ -96,9 +115,9 @@ class MedicineCard extends StatelessWidget {
             children: [
               const Text('Sub-total'),
               ValueListenableBuilder(
-                valueListenable: quantityNotifier,
+                valueListenable: widget.quantityNotifier,
                 builder: (context, value, _) => Text(
-                  (item.price! * value).currencyFormatRp,
+                  '${(widget.item.price! * value)}',
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),

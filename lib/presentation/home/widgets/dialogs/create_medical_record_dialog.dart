@@ -1,13 +1,15 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_clinic_app/data/models/request/create_medical_records_request_model.dart';
+import 'package:flutter_clinic_app/data/models/request/update_patien_schedule_request_model.dart';
 import 'package:flutter_clinic_app/data/models/response/master_data_layanan_response_model.dart';
 
 import 'package:flutter_clinic_app/data/models/response/master_doctor_response_model.dart';
 import 'package:flutter_clinic_app/data/models/response/master_patient_response.dart';
+import 'package:flutter_clinic_app/data/models/response/update_patien_schedule_response_model.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/create_medical_record/create_medical_record_bloc.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/data_layanan_obat/data_layanan_obat_bloc.dart';
+import 'package:flutter_clinic_app/presentation/master/bloc/update_patient_schedule/update_patient_schedule_bloc.dart';
 
 import '../../../../core/components/components.dart';
 import '../../../../core/components/custom_date_picker.dart';
@@ -52,6 +54,9 @@ class _CreateMedicalRecordDialogState extends State<CreateMedicalRecordDialog> {
   late final TextEditingController medicalTreatmentController;
   late final TextEditingController doctorNoteController;
   late DateTime? handlingTime;
+  int totalPrice = 0;
+
+  late final List<ValueNotifier<int>> quantityNotifiers;
 
   @override
   void initState() {
@@ -66,6 +71,8 @@ class _CreateMedicalRecordDialogState extends State<CreateMedicalRecordDialog> {
     medicalTreatmentController = TextEditingController(text: '');
     doctorNoteController = TextEditingController(text: '');
     handlingTime = widget.scheduleTime;
+
+    quantityNotifiers = [];
 
     context
         .read<DataLayananObatBloc>()
@@ -83,6 +90,23 @@ class _CreateMedicalRecordDialogState extends State<CreateMedicalRecordDialog> {
     medicalTreatmentController.dispose();
     doctorNoteController.dispose();
     super.dispose();
+  }
+
+  void calculateTotalPrice() {
+    int total = 0;
+    for (var i = 0; i < medicineSelected.length; i++) {
+      final item = medicineSelected[i];
+      final quantity = quantityNotifiers[i].value;
+      total += item.price! * quantity;
+    }
+    setState(() {
+      totalPrice = total;
+    });
+  }
+
+  void updateQuantity(int index, int value) {
+    quantityNotifiers[index].value = value;
+    calculateTotalPrice();
   }
 
   @override
@@ -206,6 +230,8 @@ class _CreateMedicalRecordDialogState extends State<CreateMedicalRecordDialog> {
                               label: 'Pilih Item',
                               onChanged: (value) {
                                 medicineSelected.add(value!);
+                                quantityNotifiers.add(ValueNotifier(0));
+                                calculateTotalPrice();
                                 setState(() {});
                               },
                             ),
@@ -244,10 +270,27 @@ class _CreateMedicalRecordDialogState extends State<CreateMedicalRecordDialog> {
                                           children: [
                                             ...medicineSelected.map((item) =>
                                                 MedicineCard(
+                                                  quantityNotifier:
+                                                      quantityNotifiers[
+                                                          medicineSelected
+                                                              .indexOf(item)],
                                                   item: item,
-                                                  onRemoveTap: () => setState(
-                                                      () => medicineSelected
-                                                          .remove(item)),
+                                                  onRemoveTap: () {
+                                                    setState(() =>
+                                                        medicineSelected
+                                                            .remove(item));
+                                                    quantityNotifiers.removeAt(
+                                                        medicineSelected.indexOf(
+                                                            item)); // Remove the associated quantity notifier
+                                                    calculateTotalPrice();
+                                                  },
+                                                  onQuantityChanged: (value) {
+                                                    final index =
+                                                        medicineSelected
+                                                            .indexOf(item);
+                                                    updateQuantity(
+                                                        index, value);
+                                                  },
                                                 )),
                                             const Divider(),
                                             Row(
@@ -256,11 +299,17 @@ class _CreateMedicalRecordDialogState extends State<CreateMedicalRecordDialog> {
                                                       .spaceBetween,
                                               children: [
                                                 const Text('Total'),
-                                                Text(
-                                                  50000.currencyFormatRp,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
+                                                ValueListenableBuilder(
+                                                  valueListenable:
+                                                      ValueNotifier(totalPrice),
+                                                  builder:
+                                                      (context, value, _) =>
+                                                          Text(
+                                                    value.currencyFormatRp,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -304,39 +353,118 @@ class _CreateMedicalRecordDialogState extends State<CreateMedicalRecordDialog> {
                                     builder: (context, state) {
                                       return state.maybeWhen(
                                         orElse: () {
-                                          return Button.filled(
-                                            onPressed: () {
-                                              final String? status =
-                                                  statusNotifier.value;
-                                              final CreateMedicalRecordsRequestModel
-                                                  createMedicalRecord =
-                                                  CreateMedicalRecordsRequestModel(
-                                                patientId: widget.patient.id,
-                                                doctorId: widget.doctor.id,
-                                                status: status,
-                                                patientScheduleId:
-                                                    widget.patientScheduleId,
-                                                services: medicineSelected
-                                                    .map((item) => item.id!)
-                                                    .toList(),
-                                                diagnosis:
-                                                    diagnosisController.text,
-                                                medicalTreatments:
-                                                    medicalTreatmentController
-                                                        .text,
-                                                doctorNotes:
-                                                    doctorNoteController.text,
-                                              );
-                                              context
-                                                  .read<
-                                                      CreateMedicalRecordBloc>()
-                                                  .add(
-                                                    CreateMedicalRecordEvent
-                                                        .createMedicalRecord(
-                                                            createMedicalRecord),
+                                          return BlocConsumer<
+                                              UpdatePatientScheduleBloc,
+                                              UpdatePatientScheduleState>(
+                                            listener: (context, state) {
+                                              state.maybeWhen(
+                                                orElse: () {},
+                                                error: (message) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(message),
+                                                    ),
                                                   );
+                                                },
+                                                loaded: (responseModel) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          responseModel
+                                                              .message!),
+                                                    ),
+                                                  );
+                                                },
+                                              );
                                             },
-                                            label: 'Create RM',
+                                            builder: (context, state) {
+                                              return state.maybeWhen(
+                                                orElse: () {
+                                                  return Button.filled(
+                                                    onPressed: () {
+                                                      final String? status =
+                                                          statusNotifier.value;
+                                                      final List<Service>
+                                                          services =
+                                                          medicineSelected
+                                                              .map((item) {
+                                                        final quantity =
+                                                            quantityNotifiers[
+                                                                    medicineSelected
+                                                                        .indexOf(
+                                                                            item)]
+                                                                .value;
+                                                        return Service(
+                                                          id: item.id,
+                                                          quantity: quantity,
+                                                        );
+                                                      }).toList();
+                                                      final CreateMedicalRecordsRequestModel
+                                                          createMedicalRecord =
+                                                          CreateMedicalRecordsRequestModel(
+                                                        patientId:
+                                                            widget.patient.id,
+                                                        doctorId:
+                                                            widget.doctor.id,
+                                                        status: status,
+                                                        patientScheduleId: widget
+                                                            .patientScheduleId,
+                                                        services: services,
+                                                        diagnosis:
+                                                            diagnosisController
+                                                                .text,
+                                                        medicalTreatments:
+                                                            medicalTreatmentController
+                                                                .text,
+                                                        doctorNotes:
+                                                            doctorNoteController
+                                                                .text,
+                                                      );
+
+                                                      context
+                                                          .read<
+                                                              CreateMedicalRecordBloc>()
+                                                          .add(
+                                                            CreateMedicalRecordEvent
+                                                                .createMedicalRecord(
+                                                                    createMedicalRecord),
+                                                          );
+                                                      if (totalPrice > 0) {
+                                                        // Update patient schedule status and total price
+                                                        final UpdatePatientScheduleRequestModel
+                                                            update =
+                                                            UpdatePatientScheduleRequestModel(
+                                                          status: 'processing',
+                                                          totalPrice:
+                                                              totalPrice,
+                                                        );
+
+                                                        context
+                                                            .read<
+                                                                UpdatePatientScheduleBloc>()
+                                                            .add(
+                                                              UpdatePatientScheduleEvent
+                                                                  .update(
+                                                                update,
+                                                                widget
+                                                                    .patientScheduleId,
+                                                              ),
+                                                            );
+                                                      }
+                                                    },
+                                                    label: 'Create RM',
+                                                  );
+                                                },
+                                                loading: () {
+                                                  return const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                },
+                                              );
+                                            },
                                           );
                                         },
                                         loading: () => const Center(

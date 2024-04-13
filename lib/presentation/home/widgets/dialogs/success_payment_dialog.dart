@@ -1,10 +1,32 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/components/components.dart';
 import '../../../../core/core.dart';
 
-class SuccessPaymentDialog extends StatelessWidget {
-  const SuccessPaymentDialog({super.key});
+class SuccessPaymentDialog extends StatefulWidget {
+  final int totalPrice;
+  final int nominalBayar;
+  const SuccessPaymentDialog({
+    super.key,
+    required this.totalPrice,
+    required this.nominalBayar,
+  });
+
+  @override
+  State<SuccessPaymentDialog> createState() => _SuccessPaymentDialogState();
+}
+
+class _SuccessPaymentDialogState extends State<SuccessPaymentDialog> {
+  var formatter = NumberFormat.currency(
+    locale: 'id_ID',
+    symbol: 'Rp.',
+    decimalDigits: 0,
+  );
+
+  final formattedBirthDate =
+      DateFormat('dd MMMM yyyy, HH:mm:ss').format(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +61,9 @@ class SuccessPaymentDialog extends StatelessWidget {
             const SpaceHeight(18.0),
             const Text('TOTAL TAGIHAN'),
             const SpaceHeight(5.0),
-            const Text(
-              'Rp. 120.00',
-              style: TextStyle(
+            Text(
+              widget.totalPrice.currencyFormatRp,
+              style: const TextStyle(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -50,9 +72,9 @@ class SuccessPaymentDialog extends StatelessWidget {
             const SpaceHeight(18.0),
             const Text('NOMINAL BAYAR'),
             const SpaceHeight(5.0),
-            const Text(
-              'Rp. 120.00',
-              style: TextStyle(
+            Text(
+              widget.nominalBayar.currencyFormatRp,
+              style: const TextStyle(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -61,9 +83,9 @@ class SuccessPaymentDialog extends StatelessWidget {
             const SpaceHeight(18.0),
             const Text('WAKTU PEMBAYARAN'),
             const SpaceHeight(5.0),
-            const Text(
-              '22 Januari, 11:17',
-              style: TextStyle(
+            Text(
+              formattedBirthDate,
+              style: const TextStyle(
                 fontWeight: FontWeight.w700,
               ),
             ),

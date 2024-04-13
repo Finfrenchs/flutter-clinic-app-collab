@@ -4,6 +4,7 @@ import 'package:flutter_clinic_app/data/datasources/auth_local_datasource.dart';
 import 'package:flutter_clinic_app/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_clinic_app/data/datasources/master_remote_datasource.dart';
 import 'package:flutter_clinic_app/data/datasources/medical_records_remote_datasource.dart';
+import 'package:flutter_clinic_app/data/datasources/midtrans_remote_datasource.dart';
 import 'package:flutter_clinic_app/data/datasources/schedule_patient_remote_datasource.dart';
 import 'package:flutter_clinic_app/presentation/auth/bloc/logout/logout_bloc.dart';
 import 'package:flutter_clinic_app/presentation/auth/pages/login_page.dart';
@@ -17,6 +18,8 @@ import 'package:flutter_clinic_app/presentation/master/bloc/data_layanan_obat/da
 import 'package:flutter_clinic_app/presentation/master/bloc/data_patients/data_patients_bloc.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/get_medical_records/get_medical_records_bloc.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/get_schedule_patient/get_schedule_patient_bloc.dart';
+import 'package:flutter_clinic_app/presentation/master/bloc/qris/qris_bloc.dart';
+import 'package:flutter_clinic_app/presentation/master/bloc/update_patient_schedule/update_patient_schedule_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'presentation/auth/bloc/login/login_bloc.dart';
@@ -69,6 +72,13 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               CreateMedicalRecordBloc(MedicalRecordsRemoteDatasource()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              UpdatePatientScheduleBloc(SchedulePatientRemoteDatasource()),
+        ),
+        BlocProvider(
+          create: (context) => QrisBloc(MidtransRemoteDatasource()),
         ),
       ],
       child: MaterialApp(

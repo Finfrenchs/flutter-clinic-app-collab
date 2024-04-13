@@ -57,6 +57,20 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
     );
   }
 
+  void createPayment(
+    int patientScheduleId,
+    int totalPrice,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => ConfirmPaymentPage(
+        schedulePatientId: patientScheduleId,
+        totalPrice: totalPrice,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,10 +96,10 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
           searchHint: 'Cari Pasien',
         ),
       ),
-      endDrawer: Drawer(
-        width: context.deviceWidth / 1.25,
-        child: const ConfirmPaymentPage(),
-      ),
+      // endDrawer: Drawer(
+      //   width: context.deviceWidth / 1.25,
+      //   child: const ConfirmPaymentPage(),
+      // ),
       body: ListView(
         padding: const EdgeInsets.all(24.0),
         children: [
@@ -323,9 +337,12 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
                                               patientSchedule.doctor!,
                                               patientSchedule.patient!,
                                             );
-                                          } else {
-                                            scaffoldkey.currentState!
-                                                .openEndDrawer();
+                                          } else if (selectedStatus ==
+                                              PatientStatus.completed) {
+                                            createPayment(
+                                                patientSchedule.id!,
+                                                patientSchedule.totalPrice ??
+                                                    0);
                                           }
                                         },
                                       ),

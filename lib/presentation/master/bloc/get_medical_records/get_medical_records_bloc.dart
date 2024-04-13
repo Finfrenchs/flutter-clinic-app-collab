@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_clinic_app/data/datasources/medical_records_remote_datasource.dart';
+import 'package:flutter_clinic_app/data/models/response/get_medical_records_by_patient_schedule_id_response_model.dart';
 import 'package:flutter_clinic_app/data/models/response/get_medical_records_response_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -33,6 +34,17 @@ class GetMedicalRecordsBloc
       response.fold(
         (l) => emit(_Error(l)),
         (r) => emit(_Loaded(r)),
+      );
+    });
+
+    on<_FetchByPatientScheduleId>((event, emit) async {
+      emit(const _Loading());
+
+      final response = await datasource.getMRByPatientScheduleId(event.id);
+
+      response.fold(
+        (l) => emit(_Error(l)),
+        (r) => emit(_LoadedByPatientScheduleId(r)),
       );
     });
   }

@@ -6,5 +6,8 @@ class GetMedicalRecordsState with _$GetMedicalRecordsState {
   const factory GetMedicalRecordsState.loading() = _Loading;
   const factory GetMedicalRecordsState.loaded(
       GetMedicalRecordsResponseModel data) = _Loaded;
+  const factory GetMedicalRecordsState.loadedByPatientScheduleId(
+          GetMedicalRecordsByPatientScheduleIdResponseModel data) =
+      _LoadedByPatientScheduleId;
   const factory GetMedicalRecordsState.error(String message) = _Error;
 }

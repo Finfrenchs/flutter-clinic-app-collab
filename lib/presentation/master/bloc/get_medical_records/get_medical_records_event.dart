@@ -7,4 +7,6 @@ class GetMedicalRecordsEvent with _$GetMedicalRecordsEvent {
       _FetchMedicalRecord;
   const factory GetMedicalRecordsEvent.fetchByPatientName(String name) =
       _FetchByPatientName;
+  const factory GetMedicalRecordsEvent.fetchByPatientScheduleId(int id) =
+      _FetchByPatientScheduleId;
 }

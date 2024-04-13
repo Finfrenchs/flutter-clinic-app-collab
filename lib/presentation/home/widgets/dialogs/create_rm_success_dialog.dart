@@ -3,7 +3,6 @@ import 'package:flutter_clinic_app/core/core.dart';
 
 import '../../../../core/components/components.dart';
 
-
 class CreateRMSuccessDialog extends StatelessWidget {
   const CreateRMSuccessDialog({super.key});
 
@@ -25,7 +24,7 @@ class CreateRMSuccessDialog extends StatelessWidget {
             const SpaceHeight(20.0),
             Button.filled(
               width: 120.0,
-              onPressed: () => context.pop(),
+              onPressed: () => context.pop(true),
               label: 'Submit',
             ),
           ],

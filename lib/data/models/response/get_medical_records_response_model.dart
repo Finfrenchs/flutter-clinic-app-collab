@@ -1,9 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter_clinic_app/data/models/response/get_schedule_patient_response_Model.dart';
 import 'package:flutter_clinic_app/data/models/response/master_doctor_response_model.dart';
 import 'package:flutter_clinic_app/data/models/response/master_patient_response.dart';
-
-import 'get_schedule_patient_response_Model.dart';
 
 class GetMedicalRecordsResponseModel {
   final List<MedicalRecord>? data;
@@ -132,7 +131,7 @@ class ServiceAndMedicine {
   final String? name;
   final String? category;
   final int? price;
-  final int? quantity;
+  final dynamic quantity;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final Pivot? pivot;

@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_clinic_app/data/models/request/update_patien_schedule_request_model.dart';
 import 'package:flutter_clinic_app/data/models/response/create_reserve_patient_response_model.dart';
 import 'package:flutter_clinic_app/data/models/response/get_schedule_patient_response_Model.dart';
+import 'package:flutter_clinic_app/data/models/response/update_patien_schedule_response_model.dart';
 import 'package:http/http.dart' as http;
 import '../../core/constants/variables.dart';
 import '../models/request/create_reserve_patient_request_model.dart';
@@ -67,6 +69,30 @@ class SchedulePatientRemoteDatasource {
       return Right(GetSchedulePatientResponseModel.fromJson(response.body));
     } else {
       return const Left('Gagal mendapatkan data pasien');
+    }
+  }
+
+  Future<Either<String, UpdatePatientScheduleResponseModel>>
+      updatePatientSchedule(
+          UpdatePatientScheduleRequestModel requestModel, int id) async {
+    final authData = await AuthLocalDataSource().getAuthData();
+
+    final url = Uri.parse('${Variables.baseUrl}/api/api-patient-schedules/$id');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Authorization': 'Bearer ${authData?.token}',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: requestModel.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      return Right(UpdatePatientScheduleResponseModel.fromJson(response.body));
+    } else {
+      return const Left('Gagal update jadwal pasien');
     }
   }
 }
