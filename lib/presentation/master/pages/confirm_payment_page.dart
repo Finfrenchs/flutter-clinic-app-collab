@@ -3,9 +3,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_clinic_app/data/models/request/create_payment_detail_request_model.dart';
+import 'package:flutter_clinic_app/data/models/response/get_medical_records_response_model.dart';
+import 'package:flutter_clinic_app/data/models/response/get_schedule_patient_response_Model.dart';
+import 'package:flutter_clinic_app/presentation/master/bloc/create_payment_detail/create_payment_detail_bloc.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:flutter_clinic_app/presentation/master/bloc/get_medical_records/get_medical_records_bloc.dart';
 import 'package:flutter_clinic_app/presentation/master/bloc/update_patient_schedule/update_patient_schedule_bloc.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../core/components/components.dart';
 import '../../../core/core.dart';
@@ -17,11 +22,13 @@ import '../bloc/qris/qris_bloc.dart';
 enum PaymentType { qris, cash }
 
 class ConfirmPaymentPage extends StatefulWidget {
-  final int schedulePatientId;
+  //final int patientId;
+  final SchedulePatient schedulePatient;
   final int totalPrice;
   const ConfirmPaymentPage({
     super.key,
-    required this.schedulePatientId,
+    //required this.patientId,
+    required this.schedulePatient,
     required this.totalPrice,
   });
 
@@ -42,7 +49,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
     nominalPaymentController = TextEditingController();
     context.read<GetMedicalRecordsBloc>().add(
           GetMedicalRecordsEvent.fetchByPatientScheduleId(
-              widget.schedulePatientId),
+              widget.schedulePatient.id!),
         );
 
     orderId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -336,8 +343,22 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                               totalPrice: widget.totalPrice,
                                               paymentMethod: 'QRIS',
                                             ),
-                                            widget.schedulePatientId,
+                                            widget.schedulePatient.id!,
                                           ),
+                                        );
+
+                                    final CreatePaymentDetailRequestModel
+                                        requestModel =
+                                        CreatePaymentDetailRequestModel(
+                                            patientId: widget
+                                                .schedulePatient.patientId,
+                                            patientScheduleId:
+                                                widget.schedulePatient.id,
+                                            transactionTime: DateTime.now());
+
+                                    context.read<CreatePaymentDetailBloc>().add(
+                                          CreatePaymentDetailEvent.create(
+                                              requestModel),
                                         );
                                   },
                                 );
@@ -466,6 +487,25 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                                   nominalBayar: nominalBayar,
                                                 ),
                                               );
+
+                                              final CreatePaymentDetailRequestModel
+                                                  requestModel =
+                                                  CreatePaymentDetailRequestModel(
+                                                      patientId: widget
+                                                          .schedulePatient
+                                                          .patientId,
+                                                      patientScheduleId: widget
+                                                          .schedulePatient.id,
+                                                      transactionTime:
+                                                          DateTime.now());
+
+                                              context
+                                                  .read<
+                                                      CreatePaymentDetailBloc>()
+                                                  .add(
+                                                    CreatePaymentDetailEvent
+                                                        .create(requestModel),
+                                                  );
                                             },
                                           );
                                         },
@@ -487,8 +527,8 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                                                             paymentMethod:
                                                                 'Tunai',
                                                           ),
-                                                          widget
-                                                              .schedulePatientId,
+                                                          widget.schedulePatient
+                                                              .id!,
                                                         ),
                                                       );
                                                 },

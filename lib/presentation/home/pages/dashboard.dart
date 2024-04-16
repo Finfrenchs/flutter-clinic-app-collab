@@ -5,6 +5,7 @@ import 'package:flutter_clinic_app/presentation/auth/bloc/logout/logout_bloc.dar
 import 'package:flutter_clinic_app/presentation/auth/pages/login_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/data_schedule_doctor_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/data_service_page.dart';
+import 'package:flutter_clinic_app/presentation/master/pages/history_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/master_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/medical_record_page.dart';
 import 'package:flutter_clinic_app/presentation/master/pages/schedule_pasient_page.dart';
@@ -45,7 +46,7 @@ class _DashboardPageState extends State<DashboardPage> {
       MasterPage(onTap: (_) {}),
       const SchedulePasientPage(),
       const Center(child: Text('This is page 5')),
-      const Center(child: Text('This is page 6')),
+      const HistoryPage(),
     ];
     super.initState();
   }

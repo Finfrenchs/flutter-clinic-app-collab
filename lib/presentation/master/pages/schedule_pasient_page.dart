@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_clinic_app/core/core.dart';
+import 'package:flutter_clinic_app/data/models/response/get_schedule_patient_response_Model.dart';
 import 'package:flutter_clinic_app/data/models/response/master_doctor_response_model.dart';
 import 'package:flutter_clinic_app/data/models/response/master_patient_response.dart';
 import 'package:flutter_clinic_app/presentation/home/widgets/dialogs/create_reserve_patient_dialog.dart';
@@ -58,14 +59,18 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
   }
 
   void createPayment(
-    int patientScheduleId,
+    SchedulePatient schedulePatient,
+    //int patientScheduleId,
     int totalPrice,
+    //int patientId,
   ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => ConfirmPaymentPage(
-        schedulePatientId: patientScheduleId,
+        //patientId: patientId,
+        //schedulePatientId: patientScheduleId,
+        schedulePatient: schedulePatient,
         totalPrice: totalPrice,
       ),
     );
@@ -340,7 +345,9 @@ class _SchedulePasientPageState extends State<SchedulePasientPage> {
                                           } else if (selectedStatus ==
                                               PatientStatus.completed) {
                                             createPayment(
-                                                patientSchedule.id!,
+                                                //patientSchedule.patientId!,
+                                                //patientSchedule.id!,
+                                                patientSchedule,
                                                 patientSchedule.totalPrice ??
                                                     0);
                                           }
